@@ -1,14 +1,14 @@
 {
   "name": "fold",
-  "version": "0.9.1",
+  "version": "0.9.10",
   "description": "FOLD file format for origami models, crease patterns, etc.",
   "main": "lib/index.js",
   "bin": {
-    "fold-convert": "lib/convert_file.js"
+    "fold-convert": "lib/file.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "coffee --no-header --bare -o lib -c src",
+    "prepare": "coffee --no-header --bare -o lib -c src",
     "dist": "browserify -t coffeeify --extension=.coffee -r ./src/index.coffee:fold -o dist/fold.js"
   },
   "repository": {

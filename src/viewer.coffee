@@ -33,8 +33,11 @@ viewer.makePath = (coords) ->
 
 ### INTERFACE ###
 
-viewer.processInput = (text, view) ->
-  view.fold = JSON.parse(text)
+viewer.processInput = (input, view) ->
+  if typeof input == 'string'
+    view.fold = JSON.parse(input)
+  else
+    view.fold = input
   view.model = viewer.makeModel(view.fold)
   viewer.addRotation(view)
   viewer.draw(view)
@@ -63,7 +66,7 @@ viewer.importFile = (file, view) ->
 
 DEFAULTS = {
   viewButtons: true, axisButtons: true, attrViewer: true
-  examples: true, import: true, export: true, properties: true}
+  examples: false, import: true, export: true, properties: true}
 
 viewer.addViewer = (div, opts = {}) ->
   view = {cam: viewer.initCam(), opts: DEFAULTS}
@@ -92,12 +95,8 @@ viewer.addViewer = (div, opts = {}) ->
     if view.opts.examples
       inputDiv.innerHTML = 'Example: '
       select = viewer.appendHTML(inputDiv, 'select')
-      viewer.appendHTML(select, 'option', {
-        value: '../examples/simple.fold'}).innerHTML = 'Default'
-      viewer.appendHTML(select, 'option', {
-        value: '../examples/box.fold'}).innerHTML = 'Flexicube Unit'
-      viewer.appendHTML(select, 'option', {
-        value: '../examples/squaretwist.fold'}).innerHTML = 'Square Twist'
+      for title, url of view.opts.examples
+        viewer.appendHTML(select, 'option', {value: url}).innerHTML = title
       viewer.importURL(select.value, view)
     if view.opts.import
       inputDiv.innerHTML += ' Import: '
@@ -170,7 +169,7 @@ viewer.makeModel = (fold) ->
   if fold.edges_vertices?
     for v, i in fold.edges_vertices
       [a,b] = if v[0] > v[1] then [v[1],v[0]] else [v[0],v[1]]
-      as = if fold.edges_assignment[i]? then fold.edges_assignment[i] else 'U'
+      as = if fold.edges_assignment?[i]? then fold.edges_assignment[i] else 'U'
       m.es["e#{a}e#{b}"] = {
         v1: m.vs[a], v2: m.vs[b], as: as}
   else
@@ -219,10 +218,13 @@ viewer.faceAbove = (f1, f2, n) ->
     dir = geom.separatingDirection3D(v1, v2)
     if dir?
       return 0 > geom.dot(n, dir) # faces are separable in 3D
+    else
+      console.log "Warning: faces #{f1.i} and #{f2.i} properly intersect. 
+        Ordering is unresolved."
   if basis.length is 2
     ord = f1.ord["f#{f2.i}"]
     if ord?
-      return 0 < geom.dot(f1.n, n) * ord # faces coplanar and have order
+      return 0 > geom.dot(f2.n, n) * ord # faces coplanar and have order
   return null
 
 viewer.orderFaces = (view) ->
@@ -233,7 +235,7 @@ viewer.orderFaces = (view) ->
     for f2, j in faces when i < j
       f1_above = viewer.faceAbove(f1, f2, direction)
       if f1_above?
-        ([p,c] = if f1_above then [f1,f2] else [f2,f1])
+        [p,c] = if f1_above then [f1,f2] else [f2,f1]
         p.children = p.children.concat([c])
   view.model.fs = geom.topologicalSort(faces)
   f.g.parentNode.removeChild(f.g) for f in view.model.fs

@@ -1,4 +1,8 @@
-# [FOLD](https://github.com/edemaine/fold/) Specification (version 1 DRAFT)
+# [FOLD](https://github.com/edemaine/fold/) Specification (version 1.1)
+
+This specification is still considered a rough draft, with everything subject
+to change.  But we will increment version numbers when breaking changes or
+major new features are added.  See the [history of past versions](history.md).
 
 ## Design
 
@@ -86,7 +90,11 @@ They include:
   **Strongly recommended**, in case we ever have to make
   backward-incompatible changes.
 * `file_creator`: The software that created the file (a string).
+  **Recommended** for files output by computer software;
+  less important for files made by hand.
 * `file_author`: The human author (a string).
+* `file_title`: A title for the entire file (a string).
+* `file_description`: A description of the entire file (a string).
 * `file_classes`: A subjective interpretation about what the entire file
   represents (array of strings).  Some standard file classes include
   * `"singleModel"`: A single origami model, possibly still in multiple frames
@@ -106,9 +114,9 @@ They include:
 Frame-level (as opposed to [file-level](#file-metadata-file_))
 metadata properties in the FOLD format include
 
+* `frame_author`: The human author (a string).
 * `frame_title`: A title for the frame (a string).
 * `frame_description`: A description of the frame (a string).
-* `frame_author`: The human author (a string).
 * `frame_classes`: A subjective interpretation about what the frame represents
   (array of strings).  Some standard frame classes:
   * `"creasePattern"`: a crease pattern (unfolded)
@@ -172,13 +180,24 @@ The values of the following properties are zero-indexed arrays by vertex ID.
 * `vertices_vertices`: For each vertex, an array of vertices (vertex IDs)
   that are adjacent along edges.  If the frame represents an orientable
   manifold or planar linkage, this list should be ordered counterclockwise
-  around the vertex.  If the frame is a nonorientable manifold,
-  this list should be cyclicly ordered around the vertex.
+  around the vertex (possibly repeating a vertex more than once).
+  If the frame is a nonorientable manifold, this list should be cyclicly
+  ordered around the vertex (possibly repeating a vertex).
   Otherwise, the order is arbitrary.
   **Recommended** in any frame lacking `edges_vertices` property
   (otherwise `vertices_vertices` can easily be computed from
   `edges_vertices` as needed).
-* `vertices_faces`: 
+* `vertices_faces`: For each vertex, an array of face IDs for the faces
+  incident to the vertex.  If the frame represents an orientable manifold,
+  this list should be ordered counterclockwise around the vertex
+  (possibly repeating a face more than once).  If the frame is a nonorientable
+  manifold, this list shoudl be cyclicly ordered around the vertex
+  (possibly repeating a vertex), and matching the cyclic order of
+  `vertices_vertices` (if both are specified).
+  In addition to the matching cyclic order, `vertices_vertices` and
+  `vertices_faces` should align in start so that
+  `vertices_faces[v][i]` contains vertices `vertices_vertices[v][i]` and
+  `vertices_vertices[v][(i+1)%d]` where `d` is the degree of vertex `v`.
 
 ## Edge information: `edges_...`
 
@@ -214,16 +233,16 @@ The values of the following properties are zero-indexed arrays by edge ID.
   of the face to the left of the edge (listed first in `edges_faces`) to point
   into the adjacent face (when fully folded), while a mountain fold has the
   same normal point away from the adjacent face.
-* `edges_foldAngles`: For each edge, the fold angle (deviation from flatness)
+* `edges_foldAngle`: For each edge, the fold angle (deviation from flatness)
   along each edge of the pattern.  The fold angle is a number in degrees
   lying in the range [&minus;180, 180].  The fold angle is positive for
   valley folds, negative for mountain folds, and zero for flat, unassigned,
-  and border folds.  Accordingly, the sign of `edge_foldAngles` should match
+  and border folds.  Accordingly, the sign of `edge_foldAngle` should match
   `edges_assignment` if both are specified.
-* `edges_lengths`: For each edge, the length of the edge (a number).
+* `edges_length`: For each edge, the length of the edge (a number).
   This is mainly useful for defining the intrinsic geometry of
   abstract complexes where `vertices_coords` are unspecified;
-  otherwise, `edges_lengths` can be computed from `vertices_coords`.
+  otherwise, `edges_length` can be computed from `vertices_coords`.
 
 ## Face information: `faces_...`
 

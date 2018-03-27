@@ -1,4 +1,5 @@
-# FOLD
+# FOLD [[spec](doc/spec.md), [viewer](https://edemaine.github.io/fold/examples/foldviewer.html), [API](doc/api.md)]
+
 **FOLD** (Flexible Origami List Datastructure) is a file format (with extension
 `.fold`) for describing **origami models**: crease patterns, mountain-valley
 patterns, folded states, etc.  Mainly, a FOLD file can store a **mesh** with
@@ -39,8 +40,14 @@ In addition, FOLD can support **linkages** (with 1D edges but no 2D faces).
 
 ## FOLD Software Tools
 
+Here is software supporting the FOLD format, built both within this project
+and by other people:
+
 * [FOLD viewer](https://edemaine.github.io/fold/examples/foldviewer.html)
   loads and display a given .fold file, useful for visualization and testing
+* Amanda Ghassaei's
+  [Origami Simulator](https://github.com/amandaghassaei/OrigamiSimulator)
+  supports FOLD input and output
 
 ## [FOLD JavaScript Library](https://github.com/edemaine/fold/tree/master/doc/api.md)
 
