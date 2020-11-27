@@ -164,7 +164,7 @@ metadata properties in the FOLD format include
   * `"pt"`: desktop publishing/PostScript [points](https://en.wikipedia.org/wiki/Point_(typography)) (1/72 in)
   * `"m"`: meters (1/299,792,458 light seconds)
   * `"cm"`: centimeters (1/100 meters)
-  * `"mm"`: microns (1/1000 meters)
+  * `"mm"`: millimeters (1/1000 meters)
   * `"um"`: microns (1/1,000,000 meters)
   * `"nm"`: nanometers (1/1,000,000,000 meters)
 
@@ -275,9 +275,9 @@ The counterclockwise ordering of each face defines the side/sign of its
   Omitting a triple `[f, g, s]` for two faces `f` and `g` is the same as
   specifying `s = 0`, so generally triples will have `s` either +1 or &minus;1.
   If triple `[f, g, s]` appears in `faceOrders`, the corresponding triple
-  `[g, f, t]` may or may not appear; if it does, `t` should be `s` if
+  `[g, f, t]` may or may not appear; if it does, `t` should be `-s` if
   `f` and `g` have the same normal direction in the folded state,
-  and `t` should be `-s` if `f` and `g` have opposite normal directions
+  and `t` should be `s` if `f` and `g` have opposite normal directions
   in the folded state.
   If faces `f`, `g`, and `h` all share a common point, then triples
   `[f, g, s]` and `[g, h, t]` suffice; the ordering between `f` and `h`
